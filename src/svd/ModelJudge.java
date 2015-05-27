@@ -69,7 +69,7 @@ public class ModelJudge {
 		}
 		popQsort(userP, indexU, 1, nusers);
 		for (int i = 0; i < userP.length; i++) {
-			System.out.println(i%94+"  "+indexU[i] + "  " + userP[i]);
+			System.out.println(i % 94 + "  " + indexU[i] + "  " + userP[i]);
 		}
 		int[] indexI = new int[nitems + 1];
 		for (int i = 1; i <= nitems; i++) {
@@ -150,6 +150,36 @@ public class ModelJudge {
 		}
 		if (x < j) {
 			popQsort(a, index, x, j);
+		}
+	}
+
+	private static void doublepopQsort(double[] a, int[] index, int x, int y) {
+		int i = x;
+		int j = y;
+		double t = a[(i + j) / 2];
+		do {
+			while (a[i] > t) {
+				i++;
+			}
+			while (a[j] < t) {
+				j--;
+			}
+			if (i <= j) {
+				double temp = a[i];
+				a[i] = a[j];
+				a[j] = temp;
+				int temp_index = index[i];
+				index[i] = index[j];
+				index[j] = temp_index;
+				i++;
+				j--;
+			}
+		} while (i <= j);
+		if (i < y) {
+			doublepopQsort(a, index, i, y);
+		}
+		if (x < j) {
+			doublepopQsort(a, index, x, j);
 		}
 	}
 
@@ -261,6 +291,45 @@ public class ModelJudge {
 			}
 			temp = temp / unlabeledSet.getSize();
 			System.out.println("model diversity on unlabeledSet=" + temp);
+		}
+	}
+
+	public static void getRecall() {
+
+	}
+
+	public static void getPrecision() {
+
+	}
+
+	public static void modelGetPrecisionAndRecall(RecModel m, Set trainSet,
+			Set testSet, int n) {
+		int nitems = Ssl.nitems;
+		int nusers = Ssl.nusers;
+
+		int[][] trainSet_temp = new int[nusers + 1][nitems + 1];
+		for (int i = 0; i < trainSet.getSize(); i++) {
+			trainSet_temp[trainSet.getUsers()[i]][trainSet.getItems()[i]] = 1;
+		}
+		int[][] testSet_temp = new int[nusers + 1][nitems + 1];
+		for (int i = 0; i < testSet.getSize(); i++) {
+			testSet_temp[testSet.getUsers()[i]][testSet.getItems()[i]] = 1;
+		}
+
+		int[] indexI = new int[nitems + 1];
+		for (int i = 1; i <= nitems; i++) {
+			indexI[i] = i;
+		}
+		double[] record = new double[nitems + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				record[j] = m.predict(i, j);
+			}
+		}
+		doublepopQsort(record, indexI, 1, nitems);
+
+		for (int i = 1; i <= nitems; i++) {
+
 		}
 	}
 }

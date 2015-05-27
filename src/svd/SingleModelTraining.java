@@ -1,6 +1,5 @@
 package svd;
 
-
 public class SingleModelTraining {
 	public static int numPasses = 100000;
 	public static boolean Stochastic = true;
@@ -50,13 +49,14 @@ public class SingleModelTraining {
 			}
 		}
 		m = best;
-	
+
 		System.out.println("After training,  model       rmse on trainSet= "
 				+ ModelJudge.modelGetRmse(m, trainSet));
 		System.out.println("After training,  model       rmse on testSet= "
 				+ ModelJudge.modelGetRmse(m, testSet));
 		ModelJudge.calPopularity(trainSet, 943, 1682);
 		ModelJudge.modelGetBinRmse(m, testSet);
+		ModelJudge.modelGetPrecisionAndRecall(m, trainSet, testSet, 20);
 
 		// Model2 m2=new
 		// Model2(trainSet.getNusers(),trainSet.getNitems(),trainSet.getMean());
