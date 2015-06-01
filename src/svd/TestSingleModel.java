@@ -12,8 +12,9 @@ public class TestSingleModel {
 	public static int userFeatureNumerSize2 = Ssl.userFeatureNumerSize2;
 	public static int userFeatureNumerSize3 = Ssl.userFeatureNumerSize3;
 	public static boolean printSwitch = false;
+
 	// public static String trainSetName="smallTrainY.txt";
-	public static String trainSetName = "trainY.txt";
+	// public static String trainSetName = "trainY.txt";
 
 	public static void main(String[] args) throws IOException {
 		TestSingleModel tsm = new TestSingleModel();
@@ -26,9 +27,11 @@ public class TestSingleModel {
 		Set testSet = init.getTestSet();
 		int[][] itemFeature = init.getItemFeature();
 		int[][] userFeature = init.getUserFeature();
-
+//		ModelJudge.calPopularity(init.getOriginSet(), 943, 1682);
 		// ModelJudge.calPopularity(trainSet, nusers, nitems);
-		SingleModelTraining m = new SingleModelTraining();
+		// ModelJudge.calPopularity(testSet, nusers, nitems);
+//		SingleModelTraining m = new SingleModelTraining();
+		SingleModelTraining_Top_N m = new SingleModelTraining_Top_N();
 		m.train(trainSet, testSet, userFeature, itemFeature);
 		// GeneticModelTraining gmt=new GeneticModelTraining();
 		// gmt.train(trainSet, testSet,userFeature,itemFeature);

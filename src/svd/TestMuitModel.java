@@ -13,8 +13,9 @@ public class TestMuitModel {
 	public static int userFeatureNumerSize2 = Ssl.userFeatureNumerSize2;
 	public static int userFeatureNumerSize3 = Ssl.userFeatureNumerSize3;
 	public static boolean printSwitch = false;
+
 	// public static String trainSetName="smallTrainY.txt";
-	public static String trainSetName = "trainY.txt";
+	// public static String trainSetName = "trainY.txt";
 
 	public static void main(String[] args) throws IOException {
 		TestMuitModel tmm = new TestMuitModel();
@@ -34,7 +35,8 @@ public class TestMuitModel {
 		// a.train(trainSet, testSet, userFeature, itemFeature);
 
 		for (double beta = 0.0; beta < 1.0; beta += 0.1) {
-			MuitModelTraining m = new MuitModelTraining();
+//			MuitModelTraining m = new MuitModelTraining();
+			MuitModelTraining_Top_N m = new MuitModelTraining_Top_N();
 			MuitModelTraining.beta = beta;
 			System.out.println("beta :" + MuitModelTraining.beta);
 			ArrayList<Double> results = new ArrayList<>();

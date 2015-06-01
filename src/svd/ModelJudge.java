@@ -69,7 +69,7 @@ public class ModelJudge {
 		}
 		popQsort(userP, indexU, 1, nusers);
 		for (int i = 0; i < userP.length; i++) {
-			System.out.println(i % 94 + "  " + indexU[i] + "  " + userP[i]);
+			System.out.println(i + "  " + indexU[i] + "  " + userP[i]);
 		}
 		int[] indexI = new int[nitems + 1];
 		for (int i = 1; i <= nitems; i++) {
@@ -302,7 +302,7 @@ public class ModelJudge {
 
 	}
 
-	public static void modelGetPrecisionAndRecall(RecModel m, Set trainSet,
+	public static int modelGetPrecisionAndRecall(RecModel m, Set trainSet,
 			Set testSet, int n) {
 		int nitems = Ssl.nitems;
 		int nusers = Ssl.nusers;
@@ -316,20 +316,143 @@ public class ModelJudge {
 			testSet_temp[testSet.getUsers()[i]][testSet.getItems()[i]] = 1;
 		}
 
-		int[] indexI = new int[nitems + 1];
-		for (int i = 1; i <= nitems; i++) {
-			indexI[i] = i;
-		}
-		double[] record = new double[nitems + 1];
+		int[][] indexI = new int[nusers + 1][nitems + 1];
 		for (int i = 1; i <= nusers; i++) {
 			for (int j = 1; j <= nitems; j++) {
-				record[j] = m.predict(i, j);
+				indexI[i][j] = j;
 			}
 		}
-		doublepopQsort(record, indexI, 1, nitems);
 
-		for (int i = 1; i <= nitems; i++) {
+		double[][] record = new double[nusers + 1][nitems + 1];
+		// double[] record = new double[nitems + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				record[i][j] = m.predict(i, j);
+
+			}
+			doublepopQsort(record[i], indexI[i], 1, nitems);
+		}
+
+		int[][] result = new int[nusers + 1][n];
+		doublepopQsort(record[1], indexI[1], 1, nitems);
+		// for (int i = 1; i <= nitems; i++) {
+		// System.out.println(indexI[1][i] + "  " + record[1][i]);
+		// }
+		int count = 0;
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				if (!contains(indexI[i][j], trainSet_temp[i])) {
+					result[i][count] = indexI[i][j];
+					// System.out.print(indexI[i][j] + "|");
+					count++;
+					if (count == n) {
+						count = 0;
+						break;
+					}
+				}
+			}
+			// System.out.println();
+		}
+		int[] num = new int[nusers + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 0; j < n; j++) {
+				if (contains(result[i][j], testSet_temp[i])) {
+					num[i]++;
+				}
+			}
 
 		}
+		count = 0;
+		for (int i = 1; i <= nusers; i++) {
+			// System.out.println(i + " " + num[i]);
+			count += num[i];
+		}
+//		System.out.println(count);
+//		System.out.println("precision:" + (1.0 * count) / (n * nusers));
+//		System.out.println("recall:" + (1.0 * count) / testSet.getSize());
+		// precision
+		return count;
+
+	}
+
+	public static int modelGetPrecisionAndRecall(ArrayList<RecModel> models,
+			Set trainSet, Set testSet, int n) {
+		int nitems = Ssl.nitems;
+		int nusers = Ssl.nusers;
+
+		int[][] trainSet_temp = new int[nusers + 1][nitems + 1];
+		for (int i = 0; i < trainSet.getSize(); i++) {
+			trainSet_temp[trainSet.getUsers()[i]][trainSet.getItems()[i]] = 1;
+		}
+		int[][] testSet_temp = new int[nusers + 1][nitems + 1];
+		for (int i = 0; i < testSet.getSize(); i++) {
+			testSet_temp[testSet.getUsers()[i]][testSet.getItems()[i]] = 1;
+		}
+
+		int[][] indexI = new int[nusers + 1][nitems + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				indexI[i][j] = j;
+			}
+		}
+
+		double[][] record = new double[nusers + 1][nitems + 1];
+		// double[] record = new double[nitems + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				record[i][j] = MuitModelTraining.getAve(i, j, models);// m.predict(i,
+																		// j);
+
+			}
+			doublepopQsort(record[i], indexI[i], 1, nitems);
+		}
+
+		int[][] result = new int[nusers + 1][n];
+		doublepopQsort(record[1], indexI[1], 1, nitems);
+		// for (int i = 1; i <= nitems; i++) {
+		// System.out.println(indexI[1][i] + "  " + record[1][i]);
+		// }
+		int count = 0;
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 1; j <= nitems; j++) {
+				if (!contains(indexI[i][j], trainSet_temp[i])) {
+					result[i][count] = indexI[i][j];
+					// System.out.print(indexI[i][j] + "|");
+					count++;
+					if (count == n) {
+						count = 0;
+						break;
+					}
+				}
+			}
+			// System.out.println();
+		}
+		int[] num = new int[nusers + 1];
+		for (int i = 1; i <= nusers; i++) {
+			for (int j = 0; j < n; j++) {
+				if (contains(result[i][j], testSet_temp[i])) {
+					num[i]++;
+				}
+			}
+
+		}
+		int sum = 0;
+		for (int i = 1; i <= nusers; i++) {
+			// System.out.println(i + " " + num[i]);
+			sum += num[i];
+		}
+		System.out.println(sum);
+		System.out.println("precision:" + (1.0 * sum) / (n * nusers));
+		System.out.println("recall:" + (1.0 * sum) / testSet.getSize());
+		// precision
+		return sum;
+
+	}
+
+	public static boolean contains(int a, int[] list) {
+		if (list[a] != 0)
+			return true;
+
+		return false;
 	}
 }

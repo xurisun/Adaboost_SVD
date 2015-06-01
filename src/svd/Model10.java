@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 //rui=mu+bu+bi+pq
 public class Model10 implements RecModel {
-	public double lambda = 0.0;// 0.02 //0.05
-	public double alpha = 0.015;// 0.005 //0.001
+	public double lambda = 0.02;// 0.02 //0.05
+	public double alpha = 0.005;// 0.005 //0.001
 
 	public static double beta = 0.5;
 	int nusers;

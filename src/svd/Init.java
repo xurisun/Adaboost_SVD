@@ -17,8 +17,16 @@ public class Init {
 	public static int T = 30;
 	public static int thoDecrease = 15;
 	public static boolean printSwitch = true;
+//	public static String trainSetName = "train10_.txt";
+//	public static String testSetName = "test10_.txt";
+//	public static String trainSetName = "train15_.txt";
+//	public static String testSetName = "test15_.txt";
+	// public static String trainSetName = "train5_.txt";
+	// public static String testSetName = "test5_.txt";
 	public static String trainSetName = "trainY.txt";
+	public static String testSetName = "testY.txt";
 
+	private Set originSet;
 	private Set trainSet;
 	private Set testSet;
 	private int[][] itemFeature;
@@ -35,7 +43,19 @@ public class Init {
 					Integer.parseInt(tempSS[1]), Integer.parseInt(tempSS[2]));
 		}
 		br.close();
-		br = new BufferedReader(new FileReader("testY.txt"));
+
+		br = new BufferedReader(new FileReader("Y.txt"));
+		int nOriginY = Integer.parseInt(br.readLine());
+		originSet = new Set(nOriginY, nusers, nitems);
+		for (int i = 0; i < nOriginY; i++) {
+			String tempS = br.readLine();
+			String[] tempSS = tempS.split(" ");
+			originSet.add(Integer.parseInt(tempSS[0]),
+					Integer.parseInt(tempSS[1]), Integer.parseInt(tempSS[2]));
+		}
+		br.close();
+
+		br = new BufferedReader(new FileReader(testSetName));
 		int nTestY = Integer.parseInt(br.readLine());
 		testSet = new Set(nTestY, nusers, nitems);
 		for (int i = 0; i < nTestY; i++) {
@@ -67,6 +87,14 @@ public class Init {
 			}
 		}
 		br.close();
+	}
+
+	public Set getOriginSet() {
+		return originSet;
+	}
+
+	public void setOriginSet(Set originSet) {
+		this.originSet = originSet;
 	}
 
 	public Set getTestSet() {

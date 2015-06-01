@@ -1,12 +1,13 @@
 package svd;
 
-public class SingleModelTraining {
+public class SingleModelTraining_Top_N {
 	public static int numPasses = 100000;
 	public static boolean Stochastic = true;
+	public static int n = 10;
 
 	public RecModel train(Set trainSet, Set testSet, int[][] userFeature,
 			int[][] itemFeature) {
-		double preTestRmse = 100;
+		double preTestRmse = 0;
 		RecModel best = null;
 		int timesNotUpdate = 0;
 
@@ -31,18 +32,21 @@ public class SingleModelTraining {
 			}
 			double trainSetRmse = ModelJudge.modelGetRmse(m, trainSet);
 			double testSetRmse = ModelJudge.modelGetRmse(m, testSet);
+			int num = ModelJudge.modelGetPrecisionAndRecall(m, trainSet,
+					testSet, n);
 			System.out.println("pass=" + pass);
 			System.out.println("model TrainSet Rmse=" + trainSetRmse);
 			System.out.println("model TestSet                   Rmse="
 					+ testSetRmse);
-			if (testSetRmse < preTestRmse) {
-				preTestRmse = testSetRmse;
+
+			if (num > preTestRmse) {
+				preTestRmse = num;
 				timesNotUpdate = 0;
 				best = m.myclone();
 			} else {
 				timesNotUpdate++;
 				if (timesNotUpdate == 10) {
-					System.out.println("Stop updating: model rmse= "
+					System.out.println("Stop updating: model hit= "
 							+ preTestRmse);
 					break;
 				}
@@ -58,7 +62,7 @@ public class SingleModelTraining {
 		System.out.println("-----------------------------");
 		// ModelJudge.calPopularity(testSet, 943, 1682);
 		// ModelJudge.modelGetBinRmse(m, testSet);
-		ModelJudge.modelGetPrecisionAndRecall(m, trainSet, testSet, 10);
+		ModelJudge.modelGetPrecisionAndRecall(m, trainSet, testSet, n);
 
 		// Model2 m2=new
 		// Model2(trainSet.getNusers(),trainSet.getNitems(),trainSet.getMean());
